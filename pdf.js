@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const utils = require('util')
-const html_to_pdf = require('html-pdf-node');
+const puppeteer = require('puppeteer')
+const hb = require('handlebars')
 const readFile = utils.promisify(fs.readFile)
 async function getTemplateHtml() {
     console.log("Loading template file in memory")
@@ -13,28 +14,22 @@ async function getTemplateHtml() {
     }
 }
 async function generatePdf() {
+    let data = {};
     getTemplateHtml().then(async (res) => {
-        var options = {
-            format: 'A4',
-            "border": "10px",
-            "type": "pdf",
-            margin: {
-                'left': 90,
-                'top': 20,
-                'bottom': 20
+        console.log("Compiing the template with handlebars")
+        const template = hb.compile(res, { strict: true });
+        const result = template(data);
+        const html = result;
+        const browser = await puppeteer.launch(
+            {
+                executablePath: '/usr/bin/chromium-browser'
             }
-        }
-
-        let file = { content: res };
-        return new Promise((resolve) => {
-            html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
-                const string = pdfBuffer.toString('base64');
-                resolve(string)
-                console.log(string)
-                console.log("PDF Generated")
-
-            })
-        })
+        );
+        const page = await browser.newPage()
+        await page.setContent(html)
+        await page.pdf({ path: 'invoice.pdf', format: 'A4' })
+        await browser.close();
+        console.log("PDF Generated")
     }).catch(err => {
         console.error(err)
     });
