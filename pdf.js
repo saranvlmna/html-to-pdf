@@ -17,10 +17,17 @@ async function generatePdf() {
     let data = {};
     getTemplateHtml().then(async (res) => {
         console.log("Compiing the template with handlebars")
+        const browserFetcher = puppeteer.createBrowserFetcher();
+        let revisionInfo = await browserFetcher.download('884014')
         const template = hb.compile(res, { strict: true });
         const result = template(data);
         const html = result;
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch(
+            {
+                executablePath: revisionInfo.executablePath,
+                args: ['--no-sandbox', "--disabled-setupid-sandbox"]
+            }
+        );
         const page = await browser.newPage()
         await page.setContent(html)
         await page.pdf({ path: 'invoice.pdf', format: 'A4' })
