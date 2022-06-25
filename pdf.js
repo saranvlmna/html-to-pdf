@@ -20,7 +20,9 @@ async function generatePdf() {
         const template = hb.compile(res, { strict: true });
         const result = template(data);
         const html = result;
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            executablePath: '/usr/bin/chromium-browser'
+        });
         const page = await browser.newPage()
         await page.setContent(html)
         await page.pdf({ path: 'invoice.pdf', format: 'A4' })
