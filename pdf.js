@@ -23,7 +23,7 @@ async function getTemplateHtml() {
             const html = result;
             const browser = await puppeteer.launch(
                 {
-                    headless: true
+                    executablePath: '/usr/bin/chromium-browser'
                 }
             );
             const page = await browser.newPage()
