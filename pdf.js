@@ -3,7 +3,6 @@ const path = require('path')
 const utils = require('util')
 const puppeteer = require('puppeteer')
 const hb = require('handlebars')
-const { resolve } = require('path')
 const readFile = utils.promisify(fs.readFile)
 async function getTemplateHtml() {
     console.log("Loading template file in memory")
@@ -24,7 +23,7 @@ async function getTemplateHtml() {
             const html = result;
             const browser = await puppeteer.launch(
                 {
-                    executablePath: '/usr/bin/chromium-browser'
+                    headless: true
                 }
             );
             const page = await browser.newPage()
