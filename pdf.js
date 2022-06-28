@@ -46,11 +46,10 @@ async function getTemplateHtml() {
 
             var html_to_pdf = require('html-pdf-node');
             let options = {
-                format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                //  executablePath: '/usr/bin/chromium-browser'
+                format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox',],
             };
             let file = { content: res };
-            html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+            html_to_pdf.generatePdfs(file, options).then(pdfBuffer => {
                 console.log("PDF Buffer:-", pdfBuffer);
             });
             
