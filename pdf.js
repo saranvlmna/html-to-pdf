@@ -13,46 +13,16 @@ async function getTemplateHtml() {
         return Promise.reject("Could not load html template");
     }
 }
- function generatePdf() {
-    let data = {};
+ function datasgg() {
     getTemplateHtml().then(async (res) => {
         return new Promise(async(resolve) => {
-            // console.log("Compiing the template with handlebars")
-            // const template = hb.compile(res, { strict: true });
-            // const result = template(data);
-            // const html = result;
-            // const browser = await puppeteer.launch(
-            //     {
-            //         executablePath: '/usr/bin/chromium-browser'
-            //     }
-            // );
-            // const page = await browser.newPage()
-            // await page.setContent(html)
-            // await page.pdf({
-            //     margin: {
-            //         format: 'A4',
-            //         'left': 90,
-            //         'top': 30,
-            //         'bottom': 30
-            //     }
-    
-            // }).then((res) => {
-            //     const string = res.toString('base64');
-            //     resolve(string)
-            //     console.log(string)
-            // })
-            // await browser.close();
-
-
-            var html_to_pdf = require('html-pdf-node');
             let options = {
-                format: 'A4'
+                format: 'A4',
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
             };
             let file = { content: res };
-            html_to_pdf.generatePdfs(file, options).then(pdfBuffer => {
-                console.log("PDF Buffer:-", pdfBuffer);
-            });
-            
+            const s = await generatePdf(file, options)
+            console.log(s)
         })
     }).catch(err => {
         console.error(err)
@@ -60,6 +30,43 @@ async function getTemplateHtml() {
 }
 
 
+async function generatePdf(file, options, callback) {
+    const inlineCss = require('inline-css')
+    var Promise = require('bluebird');
+    let args = [
+        '--use-gl=egl',
+    ];
+    if (options.args) {
+        args = options.args;
+        delete options.args;
+    }
+
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: args
+    });
+    const page = await browser.newPage();
+
+    if (file.content) {
+        data = await inlineCss(file.content, { url: "/" });
+        const template = hb.compile(data, { strict: true });
+        const result = template(data);
+        const html = result;
+        await page.setContent(html, {
+            waitUntil: 'networkidle0',
+        });
+    } else {
+        await page.goto(file.url, {
+            waitUntil: ['load', 'networkidle0'],
+        });
+    }
+
+    return Promise.props(page.pdf(options))
+        .then(async function (data) {
+            await browser.close();
+            return Buffer.from(Object.values(data));
+        }).asCallback(callback);
+}
 
 
-generatePdf();
+datasgg()
