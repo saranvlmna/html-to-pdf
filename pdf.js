@@ -47,7 +47,7 @@ async function getTemplateHtml() {
             var html_to_pdf = require('html-pdf-node');
             let options = {
                 format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                //  executablePath: '/usr/bin/chromium-browser'
+                 executablePath: '/usr/bin/chromium-browser'
             };
             let file = { content: res };
             html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
