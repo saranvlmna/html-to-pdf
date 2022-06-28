@@ -46,7 +46,7 @@ async function getTemplateHtml() {
 
             var html_to_pdf = require('html-pdf-node');
             let options = {
-                format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox',],
+                format: 'A4'
             };
             let file = { content: res };
             html_to_pdf.generatePdfs(file, options).then(pdfBuffer => {
