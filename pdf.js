@@ -18,7 +18,6 @@ async function getTemplateHtml() {
         return new Promise(async(resolve) => {
             let options = {
                 format: 'A4',
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
             };
             let file = { content: res };
             const s = await generatePdf(file, options)
@@ -33,7 +32,6 @@ async function getTemplateHtml() {
 async function generatePdf(file, options, callback) {
     const inlineCss = require('inline-css')
     var Promise = require('bluebird');
-
     const browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
         executablePath: '/usr/bin/chromium-browser'
