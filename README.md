@@ -4,13 +4,13 @@
 this app purpose convert html file to pdf
 
 
-install
+## install
 npm i
 
-start
+## start
 npm run start
 
-author
+## author
 Saranjith P visit: https://sarancom.web.app/
 
 Thanks for using this app
